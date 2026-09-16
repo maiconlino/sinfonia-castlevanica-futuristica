@@ -1,0 +1,186 @@
+[
+  {
+    "path": "index.html",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/",
+    "bytes": 10956,
+    "sha256": "74ec72d36849017f151bf159b7b1e9d5e1027da429a64f2357e2db5e9b88793d",
+    "content_type": "text/html; charset=utf-8"
+  },
+  {
+    "path": "demo/index.html",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/demo/",
+    "bytes": 6999,
+    "sha256": "36bb54448ecbb7f513ce38cd56b4b3a4cc056b37dec11783be79a8cdc9fc1ba6",
+    "content_type": "text/html; charset=utf-8"
+  },
+  {
+    "path": "style.css",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/style.css",
+    "bytes": 8244,
+    "sha256": "3b9156ea87d3df91c4bcaf6e4fd3952453ba6b7276ce1e451c1dc0c5b30df141",
+    "content_type": "text/css; charset=utf-8"
+  },
+  {
+    "path": "mobile.css",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/mobile.css",
+    "bytes": 12080,
+    "sha256": "3e370e4613bed1bc22db299b1274cd18c3a5ad61b67b50fb215045885452238e",
+    "content_type": "text/css; charset=utf-8"
+  },
+  {
+    "path": "campaign.css",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/campaign.css",
+    "bytes": 9362,
+    "sha256": "a3d7bf587d2270aea6287d56802025b477c95873fbfacc62ccc0779674d5de94",
+    "content_type": "text/css; charset=utf-8"
+  },
+  {
+    "path": "campaign.js",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/campaign.js",
+    "bytes": 21778,
+    "sha256": "37143c5c585db201708643f38971ee68aae05c80b47074d95b58d8720686079e",
+    "content_type": "text/javascript; charset=utf-8"
+  },
+  {
+    "path": "demo/style.css",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/demo/style.css",
+    "bytes": 8244,
+    "sha256": "3b9156ea87d3df91c4bcaf6e4fd3952453ba6b7276ce1e451c1dc0c5b30df141",
+    "content_type": "text/css; charset=utf-8"
+  },
+  {
+    "path": "demo/mobile.css",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/demo/mobile.css",
+    "bytes": 12080,
+    "sha256": "3e370e4613bed1bc22db299b1274cd18c3a5ad61b67b50fb215045885452238e",
+    "content_type": "text/css; charset=utf-8"
+  },
+  {
+    "path": "demo/game.js",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/demo/game.js",
+    "bytes": 9304,
+    "sha256": "4c86852f5204c4a50dea4e8f538bac45e335d7d9ab232f1d5b1da8ea3a16bb84",
+    "content_type": "text/javascript; charset=utf-8"
+  },
+  {
+    "path": "campaign-engine.mjs",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/campaign-engine.mjs",
+    "bytes": 31505,
+    "sha256": "a95e1142162904feefe2672b497dc91eb3a803768714d76e39babac262cd5e2f",
+    "content_type": "text/javascript; charset=utf-8"
+  },
+  {
+    "path": "campaign-render.mjs",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/campaign-render.mjs",
+    "bytes": 10350,
+    "sha256": "7366cd4608c5b8d6226f27ff12310b58971411ca99ebf50ab5481e6d508b40e9",
+    "content_type": "text/javascript; charset=utf-8"
+  },
+  {
+    "path": "audio.js",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/audio.js",
+    "bytes": 9422,
+    "sha256": "4ce0bbc7316c72d5ae75a6b982dad73624e7dfb095a16a5d746e7e643ba31759",
+    "content_type": "text/javascript; charset=utf-8"
+  },
+  {
+    "path": "touch.mjs",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/touch.mjs",
+    "bytes": 4329,
+    "sha256": "4c910eed7a5aa80a11f415b48f1e09d2509c9c2af5b345a6c158e162cf65a592",
+    "content_type": "text/javascript; charset=utf-8"
+  },
+  {
+    "path": "demo/engine.mjs",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/demo/engine.mjs",
+    "bytes": 14291,
+    "sha256": "782996c3ec525be836b1cf4fb75520155154a1b9537188d8fab2ae2622dc233e",
+    "content_type": "text/javascript; charset=utf-8"
+  },
+  {
+    "path": "demo/render.mjs",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/demo/render.mjs",
+    "bytes": 21700,
+    "sha256": "05c6f9d10c457264024272ed4d6e4aa6e3d2ca2446f9b6385d54c732bcba1b01",
+    "content_type": "text/javascript; charset=utf-8"
+  },
+  {
+    "path": "demo/audio.js",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/demo/audio.js",
+    "bytes": 8601,
+    "sha256": "9b5032eb3fe5af60b1ed94c59b0ffd684f0e24d8275c41a3ec4fb2a18ce79275",
+    "content_type": "text/javascript; charset=utf-8"
+  },
+  {
+    "path": "demo/touch.mjs",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/demo/touch.mjs",
+    "bytes": 4167,
+    "sha256": "3b15e8afddc19d224a1b35e880256fb329823d65d017cdbb8fdc5fbbebba7c02",
+    "content_type": "text/javascript; charset=utf-8"
+  },
+  {
+    "path": "engine.mjs",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/engine.mjs",
+    "bytes": 14291,
+    "sha256": "782996c3ec525be836b1cf4fb75520155154a1b9537188d8fab2ae2622dc233e",
+    "content_type": "text/javascript; charset=utf-8"
+  },
+  {
+    "path": "campaign-data.mjs",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/campaign-data.mjs",
+    "bytes": 68438,
+    "sha256": "1d4c7fff6f7c26e418737e8cbd2a886050c908d6694747024af97ff3d4527e35",
+    "content_type": "text/javascript; charset=utf-8"
+  },
+  {
+    "path": "render.mjs",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/render.mjs",
+    "bytes": 21700,
+    "sha256": "05c6f9d10c457264024272ed4d6e4aa6e3d2ca2446f9b6385d54c732bcba1b01",
+    "content_type": "text/javascript; charset=utf-8"
+  },
+  {
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/atlas-01-library-crypt-garden-reservoir.webp",
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/atlas-02-clocktower-observatory-core-throne.webp",
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/atlas-03-gate-forge-rooftop-vault.webp",
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/assets/",
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "path": "scores.js",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/scores.js",
+    "bytes": 737627,
+    "sha256": "53d688c5b15bf101d2a4e864f065a09cee9dba1a751f7c5c45c0cc50a4c3a72c",
+    "content_type": "text/javascript; charset=utf-8"
+  },
+  {
+    "path": "demo/assets/castle.webp",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/demo/assets/castle.webp",
+    "bytes": 482042,
+    "sha256": "f6f2076997aa5212c0d03f5b3e7e028d1d272ff69c75c3fdb61e303c22fb442d",
+    "content_type": "image/webp"
+  },
+  {
+    "path": "demo/scores.js",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/demo/scores.js",
+    "bytes": 66727,
+    "sha256": "4fe13badce8688b1335787beaae53ed8540e0280ea660a5724967d578dc99825",
+    "content_type": "text/javascript; charset=utf-8"
+  },
+  {
+    "path": "assets/castle.webp",
+    "url": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/assets/castle.webp",
+    "bytes": 482042,
+    "sha256": "f6f2076997aa5212c0d03f5b3e7e028d1d272ff69c75c3fdb61e303c22fb442d",
+    "content_type": "image/webp"
+  }
+]
