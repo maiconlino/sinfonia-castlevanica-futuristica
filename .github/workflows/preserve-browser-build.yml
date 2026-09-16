@@ -18,10 +18,10 @@ jobs:
           run-id: 35097693704
           github-token: ${{ github.token }}
           path: recovered
-      - name: Preserve game files and retrieve explicitly referenced artwork
+      - name: Preserve public files and record resources that cannot be recovered
         run: |
           python3 - <<'PY'
-          import pathlib, shutil, re, json, hashlib, urllib.request
+          import pathlib, shutil, re, json, hashlib
           src=pathlib.Path('recovered/public'); dest=pathlib.Path('public')
           shutil.copytree(src,dest,dirs_exist_ok=True)
           shutil.rmtree(dest/'cdn-cgi',ignore_errors=True)
@@ -29,13 +29,8 @@ jobs:
               text=p.read_text()
               text=re.sub(r'<script>\(function\(\)\{function c\(\).*?__CF\$cv\$params.*?</script>','',text,flags=re.S)
               p.write_text(text)
-          origin='https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site'
-          for name in ['atlas-01-library-crypt-garden-reservoir.webp','atlas-02-clocktower-observatory-core-throne.webp','atlas-03-gate-forge-rooftop-vault.webp']:
-              path='assets/'+name
-              with urllib.request.urlopen(origin+'/'+path,timeout=30) as r: data=r.read()
-              assert data[:4]==b'RIFF' and data[8:12]==b'WEBP',path
-              p=dest/path;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(data)
-          manifest={'origin':origin,'scope':'public browser game and demo, not the private server implementation or player database','removed':'Hosting-provider challenge injection only','files':{str(p.relative_to(dest)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(dest.rglob('*')) if p.is_file()}}
+          missing=['assets/atlas-01-library-crypt-garden-reservoir.webp','assets/atlas-02-clocktower-observatory-core-throne.webp','assets/atlas-03-gate-forge-rooftop-vault.webp']
+          manifest={'origin':'https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site','scope':'Public browser campaign, demo and recoverable artwork only. Original private server source and player database are not included.','removed':'Hosting-provider challenge injection only','unrecovered_artwork':missing,'unrecovered_artwork_reason':'The public retrieval of these referenced files returned HTTP 403. No access-control bypass was attempted. The original renderer has a fallback.','files':{str(p.relative_to(dest)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(dest.rglob('*')) if p.is_file()}}
           pathlib.Path('PUBLIC-BUILD-MANIFEST.json').write_text(json.dumps(manifest,indent=2)+'\n')
           pathlib.Path('package.json').write_text(json.dumps({'name':'sinfonia-castlevanica-futuristica','private':True,'type':'module','scripts':{'start':'python3 -m http.server 8080 --directory public'}},indent=2)+'\n')
           pathlib.Path('.gitignore').write_text('node_modules/\n.env\n.env.*\n*.sqlite\n*.db\nrecovered/\n')
@@ -56,7 +51,7 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add public PUBLIC-BUILD-MANIFEST.json package.json .gitignore
-          git diff --cached --quiet || git commit -m 'Preserve original public browser campaign, demo, music and artwork'
+          git diff --cached --quiet || git commit -m 'Preserve recoverable browser source and explicitly document missing private components'
           git push
       - uses: actions/upload-artifact@v4
         with:
