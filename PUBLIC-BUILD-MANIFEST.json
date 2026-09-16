@@ -1,0 +1,40 @@
+{
+  "origin": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site",
+  "scope": "Public browser campaign, demo and recoverable artwork only. Original private server source and player database are not included.",
+  "removed": "Hosting-provider challenge injection only",
+  "unrecovered_artwork": [
+    "assets/atlas-01-library-crypt-garden-reservoir.webp",
+    "assets/atlas-02-clocktower-observatory-core-throne.webp",
+    "assets/atlas-03-gate-forge-rooftop-vault.webp"
+  ],
+  "unrecovered_artwork_reason": "The public retrieval of these referenced files returned HTTP 403. No access-control bypass was attempted. The original renderer has a fallback.",
+  "files": {
+    "assets/atlas-01-library-crypt-garden-reservoir.webp": "a581ad28692037f34517bb3b21cfcb48047cf54d39db9042c27466c8c27a4748",
+    "assets/atlas-02-clocktower-observatory-core-throne.webp": "9718f352763ab71421a5c4a9ea1aa38e503c4a52387ec0ab8cf8447201bbfea7",
+    "assets/atlas-03-gate-forge-rooftop-vault.webp": "65a3fe29104413a8a9ae21a31b294a552cf6d261252365d37aa0b0510f034397",
+    "assets/castle.webp": "f6f2076997aa5212c0d03f5b3e7e028d1d272ff69c75c3fdb61e303c22fb442d",
+    "audio.js": "4ce0bbc7316c72d5ae75a6b982dad73624e7dfb095a16a5d746e7e643ba31759",
+    "campaign-data.mjs": "1d4c7fff6f7c26e418737e8cbd2a886050c908d6694747024af97ff3d4527e35",
+    "campaign-engine.mjs": "a95e1142162904feefe2672b497dc91eb3a803768714d76e39babac262cd5e2f",
+    "campaign-render.mjs": "7366cd4608c5b8d6226f27ff12310b58971411ca99ebf50ab5481e6d508b40e9",
+    "campaign.css": "a3d7bf587d2270aea6287d56802025b477c95873fbfacc62ccc0779674d5de94",
+    "campaign.js": "37143c5c585db201708643f38971ee68aae05c80b47074d95b58d8720686079e",
+    "demo/assets/castle.webp": "f6f2076997aa5212c0d03f5b3e7e028d1d272ff69c75c3fdb61e303c22fb442d",
+    "demo/audio.js": "9b5032eb3fe5af60b1ed94c59b0ffd684f0e24d8275c41a3ec4fb2a18ce79275",
+    "demo/engine.mjs": "782996c3ec525be836b1cf4fb75520155154a1b9537188d8fab2ae2622dc233e",
+    "demo/game.js": "4c86852f5204c4a50dea4e8f538bac45e335d7d9ab232f1d5b1da8ea3a16bb84",
+    "demo/index.html": "36bb54448ecbb7f513ce38cd56b4b3a4cc056b37dec11783be79a8cdc9fc1ba6",
+    "demo/mobile.css": "3e370e4613bed1bc22db299b1274cd18c3a5ad61b67b50fb215045885452238e",
+    "demo/render.mjs": "05c6f9d10c457264024272ed4d6e4aa6e3d2ca2446f9b6385d54c732bcba1b01",
+    "demo/scores.js": "4fe13badce8688b1335787beaae53ed8540e0280ea660a5724967d578dc99825",
+    "demo/style.css": "3b9156ea87d3df91c4bcaf6e4fd3952453ba6b7276ce1e451c1dc0c5b30df141",
+    "demo/touch.mjs": "3b15e8afddc19d224a1b35e880256fb329823d65d017cdbb8fdc5fbbebba7c02",
+    "engine.mjs": "782996c3ec525be836b1cf4fb75520155154a1b9537188d8fab2ae2622dc233e",
+    "index.html": "74ec72d36849017f151bf159b7b1e9d5e1027da429a64f2357e2db5e9b88793d",
+    "mobile.css": "3e370e4613bed1bc22db299b1274cd18c3a5ad61b67b50fb215045885452238e",
+    "render.mjs": "05c6f9d10c457264024272ed4d6e4aa6e3d2ca2446f9b6385d54c732bcba1b01",
+    "scores.js": "53d688c5b15bf101d2a4e864f065a09cee9dba1a751f7c5c45c0cc50a4c3a72c",
+    "style.css": "3b9156ea87d3df91c4bcaf6e4fd3952453ba6b7276ce1e451c1dc0c5b30df141",
+    "touch.mjs": "4c910eed7a5aa80a11f415b48f1e09d2509c9c2af5b345a6c158e162cf65a592"
+  }
+}
