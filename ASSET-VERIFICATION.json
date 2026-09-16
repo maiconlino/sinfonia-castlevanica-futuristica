@@ -1,0 +1,89 @@
+{
+  "atlases": [
+    {
+      "path": "assets/atlas-01-library-crypt-garden-reservoir.webp",
+      "bytes": 415912,
+      "sha256": "a581ad28692037f34517bb3b21cfcb48047cf54d39db9042c27466c8c27a4748",
+      "origin": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/assets/atlas-01-library-crypt-garden-reservoir.webp"
+    },
+    {
+      "path": "assets/atlas-02-clocktower-observatory-core-throne.webp",
+      "bytes": 483158,
+      "sha256": "9718f352763ab71421a5c4a9ea1aa38e503c4a52387ec0ab8cf8447201bbfea7",
+      "origin": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/assets/atlas-02-clocktower-observatory-core-throne.webp"
+    },
+    {
+      "path": "assets/atlas-03-gate-forge-rooftop-vault.webp",
+      "bytes": 403578,
+      "sha256": "65a3fe29104413a8a9ae21a31b294a552cf6d261252365d37aa0b0510f034397",
+      "origin": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/assets/atlas-03-gate-forge-rooftop-vault.webp"
+    }
+  ],
+  "relative_imports": [
+    {
+      "file": "campaign-render.mjs",
+      "import": "./render.mjs"
+    },
+    {
+      "file": "campaign-render.mjs",
+      "import": "./campaign-engine.mjs"
+    },
+    {
+      "file": "campaign-engine.mjs",
+      "import": "./engine.mjs"
+    },
+    {
+      "file": "campaign-engine.mjs",
+      "import": "./campaign-data.mjs"
+    },
+    {
+      "file": "render.mjs",
+      "import": "./engine.mjs"
+    },
+    {
+      "file": "audio.js",
+      "import": "./scores.js"
+    },
+    {
+      "file": "campaign.js",
+      "import": "./campaign-engine.mjs"
+    },
+    {
+      "file": "campaign.js",
+      "import": "./campaign-render.mjs"
+    },
+    {
+      "file": "campaign.js",
+      "import": "./audio.js"
+    },
+    {
+      "file": "campaign.js",
+      "import": "./touch.mjs"
+    },
+    {
+      "file": "demo/game.js",
+      "import": "./engine.mjs"
+    },
+    {
+      "file": "demo/game.js",
+      "import": "./render.mjs"
+    },
+    {
+      "file": "demo/game.js",
+      "import": "./audio.js"
+    },
+    {
+      "file": "demo/game.js",
+      "import": "./touch.mjs"
+    },
+    {
+      "file": "demo/render.mjs",
+      "import": "./engine.mjs"
+    },
+    {
+      "file": "demo/audio.js",
+      "import": "./scores.js"
+    }
+  ],
+  "backend_included": false
+}
