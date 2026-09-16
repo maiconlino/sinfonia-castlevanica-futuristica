@@ -1,13 +1,10 @@
 {
   "origin": "https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site",
-  "scope": "Public browser campaign, demo and recoverable artwork only. Original private server source and player database are not included.",
+  "scope": "Public browser campaign, demo and recovered artwork. Original private server source and player database are not included.",
   "removed": "Hosting-provider challenge injection only",
-  "unrecovered_artwork": [
-    "assets/atlas-01-library-crypt-garden-reservoir.webp",
-    "assets/atlas-02-clocktower-observatory-core-throne.webp",
-    "assets/atlas-03-gate-forge-rooftop-vault.webp"
-  ],
-  "unrecovered_artwork_reason": "The public retrieval of these referenced files returned HTTP 403. No access-control bypass was attempted. The original renderer has a fallback.",
+  "unrecovered_artwork": [],
+  "initial_retrieval_note": "The first retrieval attempt for three referenced scene atlases returned HTTP 403. The atlases were subsequently preserved in public/assets and verified as recorded in ASSET-VERIFICATION.json. They are included in this manifest.",
+  "backend_included": false,
   "files": {
     "assets/atlas-01-library-crypt-garden-reservoir.webp": "a581ad28692037f34517bb3b21cfcb48047cf54d39db9042c27466c8c27a4748",
     "assets/atlas-02-clocktower-observatory-core-throne.webp": "9718f352763ab71421a5c4a9ea1aa38e503c4a52387ec0ab8cf8447201bbfea7",
