@@ -1,0 +1,66 @@
+name: Complete public campaign artwork
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/complete-public-assets.yml'
+permissions:
+  contents: write
+jobs:
+  complete:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Recover the three dynamically assembled atlas URLs
+        run: |
+          python3 - <<'PY'
+          import pathlib,urllib.request,hashlib,json,re
+          root=pathlib.Path('public');base='https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/'
+          renderer=(root/'campaign-render.mjs').read_text()
+          names=re.findall(r"['\"](atlas-[^'\"]+\.webp)['\"]",renderer)
+          assert len(names)==3, names
+          report=[]
+          for name in names:
+              path='assets/'+name
+              req=urllib.request.Request(base+path,headers={'User-Agent':'SinfonIA-owner-backup/2.0'})
+              with urllib.request.urlopen(req,timeout=30) as r:
+                  body=r.read(12000000)
+              assert body[:4]==b'RIFF' and body[8:12]==b'WEBP',path
+              (root/path).parent.mkdir(parents=True,exist_ok=True)
+              (root/path).write_bytes(body)
+              report.append({'path':path,'bytes':len(body),'sha256':hashlib.sha256(body).hexdigest(),'origin':base+path})
+          imports=[]
+          for path in root.rglob('*'):
+              if path.suffix not in ('.js','.mjs'):continue
+              for ref in re.findall(r"(?:from|import)\s*['\"]([^'\"]+)['\"]",path.read_text()):
+                  if not ref.startswith(('.', '/')):continue
+                  target=(root/ref.lstrip('/')) if ref.startswith('/') else path.parent/ref
+                  assert target.is_file(),f'Missing import {ref} from {path}'
+                  imports.append({'file':str(path.relative_to(root)),'import':ref})
+          pathlib.Path('ASSET-VERIFICATION.json').write_text(json.dumps({'atlases':report,'relative_imports':imports,'backend_included':False},indent=2)+'\n')
+          print(json.dumps(report,indent=2))
+          PY
+      - name: Parse all JavaScript modules
+        run: |
+          for f in public/*.js public/*.mjs public/demo/*.js public/demo/*.mjs; do
+            node --input-type=module --check < "$f"
+          done
+      - name: Commit original artwork and verification
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public/assets ASSET-VERIFICATION.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Preserve all three original campaign atlases and validate module dependencies'
+            git push
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sinfonia-browser-verified-client
+          path: |
+            public/
+            README.md
+            BACKUP-MANIFEST.json
+            ASSET-VERIFICATION.json
+          retention-days: 30
