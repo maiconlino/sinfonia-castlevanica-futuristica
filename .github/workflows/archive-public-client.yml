@@ -1,0 +1,96 @@
+name: Archive public browser client
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/archive-public-client.yml'
+permissions:
+  contents: write
+jobs:
+  archive:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preserve public client and dependency graph
+        run: |
+          python3 - <<'PY'
+          import pathlib, urllib.request, urllib.parse, re, json, hashlib
+          base='https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site/'
+          origin=urllib.parse.urlparse(base).netloc
+          out=pathlib.Path('public');out.mkdir(exist_ok=True)
+          pending=[base,base+'demo/'];seen=set();report=[]
+          allowed={'.html','.mjs','.js','.css','.json','.png','.webp','.jpg','.jpeg','.svg','.mid','.ogg','.wav','.mp3','.ico','.webmanifest','.zip','.gz'}
+          def enqueue(ref,parent):
+              url=urllib.parse.urljoin(parent,ref);p=urllib.parse.urlparse(url)
+              if p.scheme not in ('https','http') or p.netloc!=origin:return
+              if p.path.startswith(('/api/','/admin','/cdn-cgi/')):return
+              if pathlib.PurePosixPath(p.path).suffix.lower() not in allowed and not p.path.endswith('/'):return
+              if any(part=='..' for part in pathlib.PurePosixPath(urllib.parse.unquote(p.path)).parts):return
+              clean=urllib.parse.urlunparse((p.scheme,p.netloc,p.path,'',p.query,''))
+              if clean not in seen and clean not in pending:pending.append(clean)
+          while pending and len(seen)<180:
+              url=pending.pop(0)
+              if url in seen:continue
+              seen.add(url)
+              try:
+                  req=urllib.request.Request(url,headers={'User-Agent':'SinfonIA-owner-source-backup/2.0'})
+                  with urllib.request.urlopen(req,timeout=25) as r:
+                      body=r.read(25000001);ct=r.headers.get('Content-Type','');final=r.url
+                  if len(body)>25000000:raise ValueError('File exceeds backup size limit')
+                  if urllib.parse.urlparse(final).netloc!=origin:raise ValueError('Redirect left public game origin')
+                  rel=urllib.parse.unquote(urllib.parse.urlparse(url).path).lstrip('/')
+                  if not rel or rel.endswith('/'):rel+='index.html'
+                  if '..' in pathlib.PurePosixPath(rel).parts:raise ValueError('Unsafe path')
+                  target=out/rel;target.parent.mkdir(parents=True,exist_ok=True)
+                  if any(t in ct for t in ['html','javascript','json','css']):
+                      text=body.decode('utf8')
+                      for m in re.finditer(r'''(?:src|href)\s*=\s*["']([^"']+)["']|(?:from|import)\s*["']([^"']+)["']|["']([^"'\s]+\.(?:m?js|css|json|png|webp|jpe?g|svg|mid|ogg|wav|mp3|ico|webmanifest|zip|gz))(?:\?[^"']*)?["']''',text):
+                          enqueue(next(x for x in m.groups() if x),url)
+                      if 'html' in ct:
+                          # Cloudflare's injected request challenge is not game source.
+                          text=re.sub(r'<script>\(function\(\)\{function c\(\).*?</script>','',text,flags=re.S)
+                          body=text.encode('utf8')
+                  target.write_bytes(body)
+                  report.append({'path':rel,'url':url,'bytes':len(body),'sha256':hashlib.sha256(body).hexdigest(),'content_type':ct})
+              except Exception as exc:report.append({'url':url,'error':str(exc)})
+          pathlib.Path('BACKUP-MANIFEST.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          if not (out/'campaign-engine.mjs').is_file():raise RuntimeError('Campaign engine was not recovered')
+          if not (out/'campaign-render.mjs').is_file():raise RuntimeError('Campaign renderer was not recovered')
+          pathlib.Path('README.md').write_text('''# SinfonIA Castlevânica Futurística, navegador
+
+          Cópia dos arquivos públicos do jogo existente, recuperados do endereço publicado pelo proprietário em 16/09/2026. A versão SNES fica no repositório separado `maiconlino/sinfonia-castlevanica-snes`.
+
+          ## Conteúdo e limites deste backup
+
+          `public/` contém o cliente da campanha, a demo, suas dependências, arte pública e partituras. `BACKUP-MANIFEST.json` registra a origem, o tamanho, o SHA-256 e eventuais falhas de leitura. O endereço publicado não foi alterado.
+
+          Este backup NÃO inclui o código privado do servidor, banco de jogadores, senhas, sessões, segredos de implantação ou a autenticação do ADM. As rotas de conta e salvamento precisam do servidor original para funcionar fora do domínio publicado. Este repositório não afirma ser um backup completo do backend.
+
+          ## Inspeção local
+
+          Na raiz, execute `python3 -m http.server 8080 --directory public` e abra `http://localhost:8080`. Isso serve o cliente e a demo, mas não implementa as APIs de contas. Para restauração completa, deve-se adicionar o pacote original do servidor e suas instruções de implantação, sem publicar segredos nem dados de jogadores.
+
+          ## Procedência
+
+          Projeto independente de Maicon Lino. Assets de jogos comerciais e ROMs comerciais não foram adicionados. Scripts de desafio da hospedagem e arquivos de fontes externos não fazem parte deste backup. A trilha e os recursos públicos do próprio projeto foram preservados quando referenciados pelo cliente.
+          '''.replace('\n          ','\n'))
+          PY
+      - name: Commit client snapshot without changing the live site
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public README.md BACKUP-MANIFEST.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Preserve public browser campaign, demo, assets and source manifest'
+            git push
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sinfonia-browser-client-snapshot
+          path: |
+            public/
+            README.md
+            BACKUP-MANIFEST.json
+          retention-days: 30
