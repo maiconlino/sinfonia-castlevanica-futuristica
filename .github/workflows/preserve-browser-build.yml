@@ -1,0 +1,68 @@
+name: Preserve browser game source and public artwork
+on:
+  workflow_dispatch:
+  push:
+    paths: ['.github/workflows/preserve-browser-build.yml']
+permissions:
+  contents: write
+  actions: read
+jobs:
+  preserve:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: sinfonia-public-build-recovery
+          run-id: 35097693704
+          github-token: ${{ github.token }}
+          path: recovered
+      - name: Preserve game files and retrieve explicitly referenced artwork
+        run: |
+          python3 - <<'PY'
+          import pathlib, shutil, re, json, hashlib, urllib.request
+          src=pathlib.Path('recovered/public'); dest=pathlib.Path('public')
+          shutil.copytree(src,dest,dirs_exist_ok=True)
+          shutil.rmtree(dest/'cdn-cgi',ignore_errors=True)
+          for p in dest.rglob('*.html'):
+              text=p.read_text()
+              text=re.sub(r'<script>\(function\(\)\{function c\(\).*?__CF\$cv\$params.*?</script>','',text,flags=re.S)
+              p.write_text(text)
+          origin='https://sinfonia-castlevanica-futuristica.maiconheverton.chatgpt.site'
+          for name in ['atlas-01-library-crypt-garden-reservoir.webp','atlas-02-clocktower-observatory-core-throne.webp','atlas-03-gate-forge-rooftop-vault.webp']:
+              path='assets/'+name
+              with urllib.request.urlopen(origin+'/'+path,timeout=30) as r: data=r.read()
+              assert data[:4]==b'RIFF' and data[8:12]==b'WEBP',path
+              p=dest/path;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(data)
+          manifest={'origin':origin,'scope':'public browser game and demo, not the private server implementation or player database','removed':'Hosting-provider challenge injection only','files':{str(p.relative_to(dest)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(dest.rglob('*')) if p.is_file()}}
+          pathlib.Path('PUBLIC-BUILD-MANIFEST.json').write_text(json.dumps(manifest,indent=2)+'\n')
+          pathlib.Path('package.json').write_text(json.dumps({'name':'sinfonia-castlevanica-futuristica','private':True,'type':'module','scripts':{'start':'python3 -m http.server 8080 --directory public'}},indent=2)+'\n')
+          pathlib.Path('.gitignore').write_text('node_modules/\n.env\n.env.*\n*.sqlite\n*.db\nrecovered/\n')
+          print('Recovered public files:',len(manifest['files']))
+          PY
+      - name: Check JavaScript syntax and campaign boot
+        run: |
+          find public -type f \( -name '*.js' -o -name '*.mjs' \) -print0 | xargs -0 -n1 node --check
+          node --input-type=module - <<'JS'
+          import {Campaign,DATA} from './public/campaign-engine.mjs';
+          const g=new Campaign(()=>{});g.start();
+          for(let i=0;i<120;i++)g.update(1/60,{right:true,attack:true});
+          if(DATA.rooms.length!==60||DATA.bosses.length!==10||DATA.items.length!==60)throw Error('Unexpected content counts');
+          console.log('Campaign boot and 120 update ticks passed.');
+          JS
+      - name: Commit browser source and assets
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public PUBLIC-BUILD-MANIFEST.json package.json .gitignore
+          git diff --cached --quiet || git commit -m 'Preserve original public browser campaign, demo, music and artwork'
+          git push
+      - uses: actions/upload-artifact@v4
+        with:
+          name: preserved-browser-game
+          path: |
+            public/
+            PUBLIC-BUILD-MANIFEST.json
+            package.json
+          retention-days: 7
