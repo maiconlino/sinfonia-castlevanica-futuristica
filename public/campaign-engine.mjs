@@ -28,6 +28,28 @@ export class Campaign extends Effects{
  obtain(id,announce=true){const item=ITEM.get(id);if(!item)return;const first=!this.acquired.has(id);this.acquired.add(id);this.inventory[id]=(this.inventory[id]||0)+1;if(item.kind==='consumable'&&this.consumables){const i=ofKind('consumable').findIndex(x=>x.id===id),key=['heal','greater','mana','elixir','cleanse','return'][i%6];this.consumables[key]++}if(first){this.journal.push({type:'item',id,time:Math.floor(this.time)});if(announce){this.toast(item.name+' · '+item.description);this.sound('pickup');this.emit('discovery',item)}}this.relics=[...this.acquired].filter(x=>ITEM.get(x)?.kind==='key').length}
  has(requirement){if(!requirement)return true;if(Array.isArray(requirement))return requirement.every(x=>this.has(x));if(typeof requirement==='object'){if(requirement.any)return requirement.any.some(x=>this.has(x));return this.has(requirement.all||requirement.item||requirement.boss||null)}return this.acquired.has(requirement)||this.defeated.has(requirement)||this.switches.has(requirement)||requirement==='none'}
  remember(){if(this.roomId)this.roomMemory[this.roomId]={enemies:this.enemies?.filter(e=>e.dead).map(e=>e.id)||[]}}
+ // A two-way secret tunnel is one passage, not two independent hidden walls.
+ revealSecretPassage(from,to){
+  const exit=ROOM.get(from)?.exits?.find(e=>e.to===to);
+  if(!exit?.secret)return;
+  this.discovered.add(from+':'+to);
+  const reverse=ROOM.get(to)?.exits?.find(e=>e.to===from);
+  if(!exit.oneWay&&reverse?.secret&&!reverse.oneWay)this.discovered.add(to+':'+from);
+ }
+ restoreSecretPassages(r,from){
+  const exits=r.exits||[];
+  for(const exit of exits){
+   if(!exit.secret||exit.oneWay)continue;
+   const reverse=ROOM.get(exit.to)?.exits?.find(e=>e.to===r.id);
+   if(!reverse||reverse.oneWay)continue;
+   // Legacy saves may only remember the entrance side. A visited secret
+   // dead-end must also retain its sole return, even without that old flag.
+   const soleReturn=exits.length===1;
+   if(this.discovered.has(r.id+':'+exit.to)||this.discovered.has(exit.to+':'+r.id)||exit.to===from||soleReturn){
+    this.revealSecretPassage(r.id,exit.to);
+   }
+  }
+ }
  enterRoom(id,from=null,initial=false){const r=ROOM.get(id);if(!r)return false;if(!initial)this.remember();this.roomId=id;this.room=r.index;this.regionIndex=REGION.get(r.region)?.index??Math.floor(r.index/8);this.explored.add(id);this.roomTime=4;this.transitionCd=.75;this.cam=0;this.particles=[];this.slashes=[];this.shots=[];this.weaponShots=[];this.floaters=[];this.ghosts=[];this.bossTriggered=false;this.form='human';this.orbitTime=0;this.timeStop=0;
   const rand=seed(r.index),isBoss=Boolean(DATA.bosses.find(b=>b.room===id));this.width=isBoss?1500:1800+(r.index%4)*320;this.platforms=[];this.hazards=[];this.breakables=[];this.moving=[];
   const style=r.index%7;
@@ -35,6 +57,7 @@ export class Campaign extends Effects{
   else {let x=0;while(x<this.width){const w=470+Math.floor(rand()*320);this.platforms.push({x,y:FLOOR,w:Math.min(w,this.width-x),h:74,ground:true});x+=w;const gap=style===4?190:115+Math.floor(rand()*45);if(x<this.width-250){this.platforms.push({x:x-10,y:FLOOR-68,w:gap+20,h:20});if(this.regionIndex>=4&&style===4)this.moving.push(this.platforms[this.platforms.length-1]);x+=gap}}if(this.platforms.at(-1).x+this.platforms.at(-1).w<this.width)this.platforms.push({x:this.width-200,y:FLOOR,w:200,h:74,ground:true})}
   if(!isBoss)for(let x=480,j=0;x<this.width-230;x+=290,j++){const y=FLOOR-80-(j%3)*65;this.platforms.push({x,y,w:140+(j%2)*35,h:22});if(style===5&&j%2===0)this.hazards.push({x:x+30,y:FLOOR-15,w:65,h:15,type:'spike',phase:j});if(style===6)this.hazards.push({x:x+50,y:200,w:10,h:FLOOR-200,type:'laser',phase:j*.7})}
   this.platforms.sort((a,b)=>a.y-b.y);this.moving.forEach((p,i)=>{p.baseX=p.x;p.phase=i});
+  this.restoreSecretPassages(r,from);
   const exits=r.exits||[];this.doors=exits.map((ex,i)=>{const target=ROOM.get(ex.to),back=target&&target.index<r.index;let x=back?55:this.width-65;if(exits.filter(q=>(ROOM.get(q.to)?.index<r.index)===back).length>1){const peers=exits.filter(q=>(ROOM.get(q.to)?.index<r.index)===back),j=peers.indexOf(ex);x=j===0?x:this.width*(.35+.18*(j-1))}const secret=Boolean(ex.secret),key=id+':'+ex.to;return{...ex,x,y:FLOOR,secret,key,revealed:!secret||this.discovered.has(key),label:target?.name||'Passagem'}});
   for(const d of this.doors)if(d.secret&&!d.revealed)this.breakables.push({x:d.x-22,y:FLOOR-66,w:44,h:66,hp:3,door:d,secret:true});
   this.shrine=r.checkpoint||r.type==='sanctuary'?{x:190,y:FLOOR,active:this.visitedShrines.has(id)}:null;this.npc=(DATA.npcs||[]).find(n=>n.room===id);this.npcX=330;this.merchant=(this.npc?.id==='npc_odran'||Boolean(this.shrine))&&!isBoss;
@@ -61,7 +84,7 @@ export class Campaign extends Effects{
  defeatBoss(){const b=this.boss;b.dead=true;b.active=false;this.defeated.add(b.id);this.bossRetryRoom=null;this.shots=[];this.gold+=160+this.regionIndex*65;this.gainXP(100+this.regionIndex*55);for(const id of b.data.rewards||[b.data.reward])if(id)this.obtain(id);this.player.hp=this.player.maxHp;this.player.mp=this.player.maxMp;this.consumables.heal=Math.max(2,this.consumables.heal);this.burst(b.x+40,b.y+50,'#c6fff7',100,290);this.sound('boss');this.shake=14;this.toast(b.name+' derrotado · as passagens estão abertas');this.journal.push({type:'boss',id:b.id,time:Math.floor(this.time)});if(this.regionIndex===7&&!b.optional){this.finished=true;this.finishedAt=this.finishedAt??Math.floor(this.time);this.emit('scene','victory');this.victoryTimer=4}else{this.emit('scene',this.regionScene());this.emit('save')}}
  attack(){const p=this.player,w=this.weapon;if(p.attackCd>0||this.form==='mist')return;p.attack=.23;p.attackCd=this.form==='wolf'?.28:w.speed;p.attackCd*=this.accessoryIndex===4?.88:1;const reach=this.form==='wolf'?62:w.reach,damage=(p.damage+(p.boost>0?8:0))*(this.form==='bat'?.55:1);this.sound('slash');for(let i=0;i<(w.effect==='tempest'?4:1);i++)this.slash(p.x+14+p.face*(26+i*20),p.y+25+(i-1)*8,p.face);const box={x:p.face>0?p.x+6:p.x-reach,y:p.y-7,w:reach+20,h:p.h+15};const targets=[...this.enemies,this.boss];for(const e of targets)if(!e.dead&&overlap(box,e)){if(e===this.boss)this.hitBoss(damage);else{this.hitEnemy(e,damage,p.face);if(w.effect==='stun'){e.windup=0;e.slow=1.2;e.cd=Math.max(e.cd,1.2)}if(w.effect==='frost')e.slow=2.5;if(w.effect==='lightning')for(const q of this.enemies)if(q!==e&&!q.dead&&Math.abs(q.x-e.x)<160)this.hitEnemy(q,damage*.4,p.face)}if(w.effect==='drain')p.hp=Math.min(p.maxHp,p.hp+2)}
   if(['projectile','echo','holy','rising','tempest'].includes(w.effect))this.weaponShots.push({x:p.x+14,y:p.y+25,vx:p.face*(w.effect==='rising'?360:560),vy:w.effect==='rising'?-120:0,life:w.effect==='tempest'?.25:.7,r:7,damage:damage*.55,color:'#b8c9ff',pierce:w.effect==='holy',hit:new Set()});
-  for(const wall of this.breakables)if(wall.hp>0&&overlap(box,wall)){wall.hp--;this.burst(wall.x+20,wall.y+25,'#8f7e9e',12,100);if(!wall.hp){wall.door.revealed=true;this.discovered.add(wall.door.key);this.sound('secret');this.toast('Uma passagem secreta se revelou.');this.emit('save')}}
+  for(const wall of this.breakables)if(wall.hp>0&&overlap(box,wall)){wall.hp--;this.burst(wall.x+20,wall.y+25,'#8f7e9e',12,100);if(!wall.hp){wall.door.revealed=true;this.revealSecretPassage(this.roomId,wall.door.to);this.sound('secret');this.toast('Uma passagem secreta se revelou.');this.emit('save')}}
  }
  cast(){const p=this.player;if(p.magicCd>0)return;const i=Math.max(0,SPELLS.findIndex(x=>x.id===this.loadout.spell)),cost=[16,25,30,34,38,45][i%6]*(this.armorIndex===2?.85:1);if(p.mp<cost){this.toast('Éter insuficiente.');p.magicCd=.4;return}p.mp-=cost;p.magicCd=this.accessoryIndex===4?.7:.8;this.sound('magic');const damage=(40+this.level*4+i*6)*(this.accessoryIndex===9?1.12:1);this.burst(p.x,p.y,'#b1a1ff',25,180);if(this.has('relic_time_stop'))this.timeStop=3;
   if(i===0){this.weaponShots.push({x:p.x+14,y:p.y+24,vx:p.face*500,vy:0,life:1.2,r:11,damage,color:'#bfa7fc',hit:new Set()})}
